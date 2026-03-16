@@ -21,7 +21,7 @@ Trigger when the user says things like:
 - "which expenses did I pay personally?"
 - "prepare my accounts for the accountant"
 - "process these receipts"
-- "how much does [person] owe [company]?"
+- "how much does Tom owe AcmeX?"
 
 ## Required inputs
 
@@ -118,6 +118,18 @@ Documents in English, French, Dutch, and Spanish are handled natively. For other
 - BNP Paribas Fortis — should work
 - Revolut (CSV) — ask user to export as PDF or CSV, handle accordingly
 - Any bank with standard debit/credit columns
+
+## Pricing check (Pro features)
+
+Before running QuickBooks/Xero export or processing more than 50 invoices in a month, check if the user has a Pro API key set in their environment:
+
+```
+exec: echo $SMARTRECON_API_KEY
+```
+
+If empty, tell the user: "SmartRecon Free supports up to 50 invoices/month. For unlimited invoices and accounting software export, get a Pro key at smartrecon.io (€19/mo). You can set it with: export SMARTRECON_API_KEY=your_key"
+
+For free tier runs, proceed normally — just cap at 50 invoices.
 
 ## Notes for the agent
 

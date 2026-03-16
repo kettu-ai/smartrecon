@@ -21,7 +21,7 @@ Match your invoices and receipts against your bank statement, auto-categorize ev
 
 | | Manual | Typical SaaS ($299+/mo) | SmartRecon |
 |--|--------|------------------------|------------|
-| Cost | Free (your time) | €299–€599/mo | Free on ClawHub |
+| Cost | Free (your time) | €299–€599/mo | Free tier + Pro |
 | Speed | Hours/days | Minutes | Minutes |
 | Privacy | ✓ | ✗ (cloud upload) | ✓ (runs locally) |
 | File size limit | — | Usually 10MB | None |
@@ -57,7 +57,7 @@ openclaw skill install smartrecon
 
 Just talk to your agent naturally:
 
-> "Reconcile my 2025 KETTU expenses — the invoices are in ~/Documents/kettu-2025/ and the bank statement is bank_statement.pdf"
+> "Reconcile my 2025 AcmeX expenses — the invoices are in ~/Documents/acmex-2025/ and the bank statement is bank_statement.pdf"
 
 > "Which expenses did I pay personally last quarter?"
 
@@ -75,7 +75,7 @@ SmartRecon will:
 ## Output example
 
 ```
-EXPENSE RECONCILIATION — KETTU SRL 2025
+EXPENSE RECONCILIATION — ACMEX SRL 2025
 =========================================
 Total invoices:         164
 Matched (bank paid):     49 items  =  €3,842.50
@@ -94,7 +94,7 @@ PERSONAL EXPENSES — deduct from balance:
   2025-04-22  LinkedIn Premium        €39.99
   ...
 
-Total Juan owes KETTU: €4,217.30
+Total Tom owes AcmeX: €4,217.30
 ```
 
 ---
@@ -104,6 +104,18 @@ Total Juan owes KETTU: €4,217.30
 Tested: **KBC** (Belgium)
 
 Should work: ING, BNP Paribas Fortis, Belfius, Revolut, N26, any bank that exports a readable PDF statement.
+
+---
+
+## Pricing
+
+| Plan | Price | Includes |
+|------|-------|---------|
+| **Free** | €0 | 50 invoices/month, basic categorization |
+| **Pro** | €19/mo | Unlimited invoices, QuickBooks/Xero export, priority support |
+| **Team** | €49/mo | Everything in Pro + multi-company, accountant sharing portal |
+
+Get your API key at **[smartrecon.io](https://smartrecon.io)**
 
 ---
 
