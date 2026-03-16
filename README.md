@@ -107,6 +107,25 @@ Should work: ING, BNP Paribas Fortis, Belfius, Revolut, N26, any bank that expor
 
 ---
 
+## 🎯 Limited Time Offer — Done For You
+
+**We'll reconcile your full year of expenses for you. One flat fee. Delivered in 48h.**
+
+Too busy to set this up yourself? Send us your invoices and bank statement and we'll run the full reconciliation, clean up the edge cases, and hand you a report your accountant can use immediately.
+
+| | |
+|--|--|
+| **What you send** | A folder of PDF invoices/receipts + your bank statement |
+| **What you get** | Full categorized report, matched/unmatched breakdown, total owed per person |
+| **Turnaround** | 48 hours |
+| **Price** | ~~€299~~ **€149 — first 20 clients only** |
+
+📩 **[Book your slot → hello@smartrecon.io](mailto:hello@smartrecon.io)**
+
+*(Only 20 spots available at this price. Once they're gone, the price goes up.)*
+
+---
+
 ## Pricing
 
 | Plan | Price | Includes |
