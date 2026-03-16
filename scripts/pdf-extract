@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""
+pdf-extract: Local PDF text extraction for Paco.
+Tries pdftotext first (fast, for digital PDFs).
+Falls back to Tesseract OCR for scanned/image PDFs.
+Usage: pdf-extract <path-to-pdf> [--lang eng+fra+nld+spa] [--pages N]
+"""
+import subprocess, sys, os, tempfile, argparse, json
+
+def run(cmd):
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    return r.stdout, r.stderr, r.returncode
+
+def extract_with_pdftotext(pdf_path):
+    out, err, code = run(['pdftotext', '-layout', '-enc', 'UTF-8', pdf_path, '-'])
+    return out.strip() if code == 0 else None
+
+def count_words(text):
+    return len(text.split()) if text else 0
+
+def extract_with_tesseract(pdf_path, lang='eng+fra+nld+spa', max_pages=None):
+    size_mb = os.path.getsize(pdf_path) / 1024 / 1024
+    dpi = '150' if size_mb > 1 else '300'
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = ['pdftoppm', '-r', dpi, '-png', pdf_path, os.path.join(tmpdir, 'page')]
+        if max_pages:
+            cmd += ['-l', str(max_pages)]
+        _, err, code = run(cmd)
+        if code != 0:
+            return None, f'pdftoppm failed: {err}'
+
+        pages = sorted([f for f in os.listdir(tmpdir) if f.endswith('.png')])
+        if not pages:
+            return None, 'No pages rendered'
+
+        texts = []
+        for page_file in pages:
+            page_path = os.path.join(tmpdir, page_file)
+            out, _, _ = run(['tesseract', page_path, 'stdout', '-l', lang, '--psm', '3'])
+            texts.append(out.strip())
+
+        return '\n\n--- PAGE BREAK ---\n\n'.join(texts), None
+
+def main():
+    parser = argparse.ArgumentParser(description='Extract text from PDF')
+    parser.add_argument('pdf', help='Path to PDF file')
+    parser.add_argument('--lang', default='eng+fra+nld+spa', help='Tesseract language(s)')
+    parser.add_argument('--pages', type=int, help='Max pages to OCR (default: all)')
+    parser.add_argument('--force-ocr', action='store_true', help='Skip pdftotext, always use Tesseract')
+    parser.add_argument('--json', action='store_true', help='Output as JSON with metadata')
+    args = parser.parse_args()
+
+    if not os.path.exists(args.pdf):
+        result = {'error': f'File not found: {args.pdf}'}
+        print(json.dumps(result) if args.json else result['error'])
+        sys.exit(1)
+
+    file_size_mb = os.path.getsize(args.pdf) / 1024 / 1024
+    method = None
+    text = None
+
+    if not args.force_ocr:
+        text = extract_with_pdftotext(args.pdf)
+        if count_words(text) >= 50:
+            method = 'pdftotext'
+        else:
+            text = None  # too sparse, fall back to OCR
+
+    if text is None:
+        method = 'tesseract'
+        text, err = extract_with_tesseract(args.pdf, args.lang, args.pages)
+        if err:
+            result = {'error': err, 'file': args.pdf}
+            print(json.dumps(result) if args.json else f'Error: {err}')
+            sys.exit(1)
+
+    word_count = count_words(text)
+
+    if args.json:
+        print(json.dumps({
+            'file': args.pdf,
+            'method': method,
+            'size_mb': round(file_size_mb, 2),
+            'word_count': word_count,
+            'text': text
+        }))
+    else:
+        print(f'[Extracted via {method} | {word_count} words | {file_size_mb:.1f}MB]\n')
+        print(text)
+
+if __name__ == '__main__':
+    main()
