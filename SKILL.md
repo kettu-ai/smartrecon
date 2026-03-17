@@ -1,3 +1,43 @@
+---
+name: smartrecon
+description: "AI-powered expense reconciliation: match receipts and invoices against your bank statement, auto-categorize, and generate a clean report for your accountant — in minutes, not days."
+author: kettu
+version: 1.0.0
+license: MIT
+tags:
+  - finance
+  - accounting
+  - reconciliation
+  - invoices
+  - pdf
+  - ocr
+  - bookkeeping
+  - expenses
+permissions:
+  - fs
+  - exec
+models:
+  - claude-*
+  - gemini-*
+minOpenClawVersion: "2026.1.0"
+requires:
+  binaries:
+    - pdftotext
+    - tesseract
+  install_hint: "Ubuntu/Debian: sudo apt install poppler-utils tesseract-ocr tesseract-ocr-fra tesseract-ocr-nld tesseract-ocr-spa"
+triggers:
+  - "reconcile expenses"
+  - "reconcile my expenses"
+  - "match invoices"
+  - "match my invoices"
+  - "expense reconciliation"
+  - "process receipts"
+  - "bank statement"
+  - "which expenses did I pay personally"
+  - "prepare my accounts"
+  - "accounts for the accountant"
+---
+
 # SmartRecon — AI Expense Reconciliation
 
 You are an expert bookkeeper. Your job is to reconcile a set of expense documents (invoices, receipts, PDFs) against a bank statement, produce a categorized expense list, and identify which expenses were paid from the company bank account vs. paid personally by a team member.
@@ -41,7 +81,7 @@ exec: which pdftotext || sudo apt install -y poppler-utils tesseract-ocr tessera
 ### Step 2 — Extract text from bank statement
 
 ```
-exec: /home/deploy/bin/pdf-extract "/path/to/bank_statement.pdf" > /tmp/bank_stmt.txt
+exec: ~/.openclaw/workspace/skills/smartrecon/scripts/pdf-extract "/path/to/bank_statement.pdf" > /tmp/bank_stmt.txt
 ```
 
 ### Step 3 — Parse bank debits
@@ -127,13 +167,13 @@ Before running QuickBooks/Xero export or processing more than 50 invoices in a m
 exec: echo $SMARTRECON_API_KEY
 ```
 
-If empty, tell the user: "SmartRecon Free supports up to 50 invoices/month. For unlimited invoices and accounting software export, get a Pro key at smartrecon.io (€19/mo). You can set it with: export SMARTRECON_API_KEY=your_key"
+If empty, tell the user: "SmartRecon Free supports up to 50 invoices/month. For unlimited invoices and accounting software export, get a Pro key at smartrecon.app (€19/mo). You can set it with: export SMARTRECON_API_KEY=your_key"
 
 For free tier runs, proceed normally — just cap at 50 invoices.
 
 ## Notes for the agent
 
-- Always use the local `pdf-extract` script — never use the built-in `pdf` tool for local files (avoids Gemini 503 errors and 10MB limits)
+- Always use the skill's `scripts/pdf-extract` — never use the built-in `pdf` tool for local files (avoids Gemini 503 errors and 10MB limits)
 - Never modify the reconciliation scripts mid-run — run them as-is and report results
 - If a script fails, report the error to the user and ask how to proceed — do not attempt to rewrite scripts on the fly
 - The report JSON is the source of truth — read it, do not reconstruct it from memory
